@@ -72,16 +72,15 @@ Public Sub BootstrapSpotCurve()
     ws.Cells(1, 5).Font.Bold = True
 
     Dim k As Long
+    Dim T As Double, cRate As Double, y As Double, face As Double
+    Dim target As Double
+    Dim lo As Double, hi As Double, mid As Double, pv As Double
+    Dim iter As Long
     For k = 1 To n
-        Dim T As Double, cRate As Double, y As Double, face As Double
         T = mats(k): cRate = coups(k): y = ytms(k): face = faces(k)
-
-        Dim target As Double
         target = PriceFromYtm(T, cRate, y, face, FREQ)
 
-        Dim lo As Double, hi As Double, mid As Double, pv As Double
         lo = -0.5: hi = 1#
-        Dim iter As Long
         For iter = 1 To MAX_ITER
             mid = (lo + hi) / 2
             pv = PriceGivenSpots(T, cRate, face, FREQ, knownMats, spots, k - 1, mid)
