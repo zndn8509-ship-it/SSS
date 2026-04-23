@@ -27,9 +27,13 @@ Public Sub BootstrapSpotCurve()
     Dim ws As Worksheet
     Set ws = ActiveSheet
 
-    Dim lastRow As Long
+    Dim lastRow As Long, v As Variant
     lastRow = 1
-    Do While IsNumeric(ws.Cells(lastRow + 1, 1).Value)
+    Do While lastRow < 10000
+        v = ws.Cells(lastRow + 1, 1).Value
+        If IsEmpty(v) Then Exit Do
+        If IsError(v) Then Exit Do
+        If Not IsNumeric(v) Then Exit Do
         lastRow = lastRow + 1
     Loop
     If lastRow < 2 Then
