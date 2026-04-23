@@ -28,7 +28,10 @@ Public Sub BootstrapSpotCurve()
     Set ws = ActiveSheet
 
     Dim lastRow As Long
-    lastRow = ws.Cells(ws.Rows.Count, "A").End(xlUp).Row
+    lastRow = 1
+    Do While IsNumeric(ws.Cells(lastRow + 1, 1).Value)
+        lastRow = lastRow + 1
+    Loop
     If lastRow < 2 Then
         MsgBox "A열 2행부터 만기(년), B열 표면금리, C열 YTM 을 입력하세요.", vbExclamation
         Exit Sub
@@ -128,17 +131,17 @@ Private Function PriceFromYtm(ByVal T As Double, ByVal cRate As Double, ByVal y 
     Dim coupon As Double
     coupon = cRate * face / freq
 
-    Dim pv As Double, i As Long, t As Double, cf As Double
+    Dim pv As Double, i As Long, tCpn As Double, cf As Double
     pv = 0#
     For i = 1 To nCpns
         If i = nCpns Then
-            t = T
+            tCpn = T
             cf = coupon + face
         Else
-            t = i / freq
+            tCpn = i / freq
             cf = coupon
         End If
-        pv = pv + cf / (1 + y / freq) ^ (freq * t)
+        pv = pv + cf / (1 + y / freq) ^ (freq * tCpn)
     Next i
     PriceFromYtm = pv
 End Function
@@ -154,18 +157,18 @@ Private Function PriceGivenSpots(ByVal T As Double, ByVal cRate As Double, ByVal
     Dim coupon As Double
     coupon = cRate * face / freq
 
-    Dim pv As Double, i As Long, t As Double, cf As Double, s As Double
+    Dim pv As Double, i As Long, tCpn As Double, cf As Double, s As Double
     pv = 0#
     For i = 1 To nCpns
         If i = nCpns Then
-            t = T
+            tCpn = T
             cf = coupon + face
         Else
-            t = i / freq
+            tCpn = i / freq
             cf = coupon
         End If
-        s = InterpSpot(t, knownMats, knownSpots, knownN, T, sT)
-        pv = pv + cf / (1 + s / freq) ^ (freq * t)
+        s = InterpSpot(tCpn, knownMats, knownSpots, knownN, T, sT)
+        pv = pv + cf / (1 + s / freq) ^ (freq * tCpn)
     Next i
     PriceGivenSpots = pv
 End Function
